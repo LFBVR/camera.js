@@ -6,10 +6,6 @@ import DEFAULT_OPTIONS from "./defaults";
 export default class Camera {
     constructor(captureOptions) {
         this.options = merge({}, DEFAULT_OPTIONS, captureOptions);
-
-        if (!captureOptions.container) {
-            throw Error('You should specify a container for your camera');
-        }
     }
 
     async init() {
