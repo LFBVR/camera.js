@@ -45,7 +45,7 @@ export default class Camera {
 
           resolve(this.initCanvas());
         },
-        reject,
+        reject
       );
     });
   }
@@ -78,7 +78,7 @@ export default class Camera {
 
     this.renderTimer = setInterval(
       this.tick(onFrame),
-      Math.round(1000 / fps),
+      Math.round(1000 / fps)
     );
   }
 
