@@ -1,111 +1,103 @@
-/*
-	camera.js v1.1
-	http://github.com/idevelop/camera.js
+'use strict';
 
-	Author: Andrei Gheorghe (http://idevelop.github.com)
-	License: MIT
-*/
+import merge from "lodash.merge";
+import DEFAULT_OPTIONS from "./defaults";
 
-var camera = (function() {
-	var options;
-	var video, canvas, context;
-	var renderTimer;
+export default class Camera {
+    constructor(captureOptions) {
+        this.options = merge({}, DEFAULT_OPTIONS, captureOptions);
+    }
 
-	function initVideoStream() {
-		video = document.createElement("video");
-		video.setAttribute('width', options.width);
-		video.setAttribute('height', options.height);
+    async init() {
+        return this._initVideoStream();
+    }
 
-		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-		window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+    _initVideoStream() {
+        return new Promise((resolve, reject) => {
+            const {width, height} = this.options;
+            const video = (this.video = document.createElement("video"));
+            video.setAttribute('width', width);
+            video.setAttribute('height', height);
 
-		if (navigator.getUserMedia) {
-			navigator.getUserMedia({
-				video: true
-			}, function(stream) {
-				options.onSuccess();
+            const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
-				if (video.mozSrcObject !== undefined) { // hack for Firefox < 19
-					video.mozSrcObject = stream;
-				} else {
-					video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-				}
-				
-				initCanvas();
-			}, options.onError);
-		} else {
-			options.onNotSupported();
-		}
-	}
+            if (!getUserMedia) {
+                reject(Error('NOT_SUPPORTED'));
+            }
 
-	function initCanvas() {
-		canvas = options.targetCanvas || document.createElement("canvas");
-		canvas.setAttribute('width', options.width);
-		canvas.setAttribute('height', options.height);
+            getUserMedia(
+                {video: true},
+                (s) => {
+                    const stream = (this.stream = s);
 
-		context = canvas.getContext('2d');
+                    if (video.mozSrcObject !== undefined) { // hack for Firefox < 19
+                        video.mozSrcObject = stream;
+                    } else {
+                        const URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+                        video.src = (URL && URL.createObjectURL(stream)) || stream;
+                    }
 
-		// mirror video
-		if (options.mirror) {
-			context.translate(canvas.width, 0);
-			context.scale(-1, 1);
-		}
+                    resolve(this._initCanvas());
+                },
+                reject
+            );
+        });
+    }
 
-		startCapture();
-	}
+    _initCanvas() {
+        const {targetCanvas, width, height, mirror} = this.options;
+        const canvas = (this.canvas = targetCanvas || document.createElement("canvas"));
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
 
-	function startCapture() {
-		video.play();
+        const context = (this.context = canvas.getContext('2d'));
 
-		renderTimer = setInterval(function() {
-			try {
-				context.drawImage(video, 0, 0, video.width, video.height);
-				options.onFrame(canvas);
-			} catch (e) {
-				// TODO
-			}
-		}, Math.round(1000 / options.fps));
-	}
+        // mirror video
+        if (mirror) {
+            context.translate(canvas.width, 0);
+            context.scale(-1, 1);
+        }
 
-	function stopCapture() {
-		pauseCapture();
+        return this.start();
+    }
 
-		if (video.mozSrcObject !== undefined) {
-			video.mozSrcObject = null;
-		} else {
-			video.src = "";
-		}
-	}
+    start() {
+        const {video, context, canvas} = this;
+        const {onFrame, fps} = this.options;
+        video.play();
 
-	function pauseCapture() {
-		if (renderTimer) clearInterval(renderTimer);
-		video.pause();
-	}
+        this.renderTimer = setInterval(
+            () => {
+                try {
+                    context.drawImage(video, 0, 0, video.width, video.height);
+                    onFrame(canvas);
+                } catch (e) {
+                    // TODO
+                }
+            },
+            Math.round(1000 / fps)
+        );
+    }
 
-	return {
-		init: function(captureOptions) {
-			var doNothing = function(){};
+    pause() {
+        const {renderTimer, video} = this;
+        if (renderTimer) {
+            clearInterval(renderTimer);
+        }
+        video.pause();
+    }
 
-			options = captureOptions || {};
+    stop() {
+        const {video, stream} = this;
+        
+        this.pause();
 
-			options.fps = options.fps || 30;
-			options.width = options.width || 640;
-			options.height = options.height || 480;
-			options.mirror = options.mirror || false;
-			options.targetCanvas = options.targetCanvas || null; // TODO: is the element actually a <canvas> ?
-
-			options.onSuccess = options.onSuccess || doNothing;
-			options.onError = options.onError || doNothing;
-			options.onNotSupported = options.onNotSupported || doNothing;
-			options.onFrame = options.onFrame || doNothing;
-
-			initVideoStream();
-		},
-
-		start: startCapture,
-
-		pause: pauseCapture,
-
-		stop: stopCapture
-	};
-})();
+        if (video.mozSrcObject !== undefined) {
+            video.mozSrcObject = null;
+        } else {
+            video.src = "";
+            // STOP CAMERA NOT JUST FEED
+            stream.getTracks().forEach(track => track.stop());
+        }
+    }
+}

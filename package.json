@@ -1,0 +1,22 @@
+{
+  "name": "camera.js",
+  "version": "1.0.0",
+  "description": "fork ES6+ of https://github.com/idevelop/camera.js",
+  "main": "camera.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LFBVR/camera.js.git"
+  },
+  "author": "LFBVR",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LFBVR/camera.js/issues"
+  },
+  "homepage": "https://github.com/LFBVR/camera.js#readme",
+  "dependencies": {
+    "lodash.merge": "^4.6.0"
+  }
+}
