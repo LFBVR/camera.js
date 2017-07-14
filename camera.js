@@ -50,8 +50,8 @@ export default class Camera {
     }
 
     _initCanvas() {
-        const {targetCanvas, width, height, mirror} = this.options;
-        const canvas = (this.canvas = targetCanvas || document.createElement("canvas"));
+        const {container, width, height, mirror} = this.options;
+        const canvas = (this.canvas = container || document.createElement("canvas"));
         canvas.setAttribute('width', width);
         canvas.setAttribute('height', height);
 
