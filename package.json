@@ -1,6 +1,6 @@
 {
-  "name": "camera.js",
-  "version": "1.0.0",
+  "name": "lfcamera",
+  "version": "1.0.1",
   "description": "fork ES6+ of https://github.com/idevelop/camera.js",
   "main": "camera.js",
   "scripts": {

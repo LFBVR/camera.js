@@ -8,7 +8,7 @@ A wrapper around the HTML5 getUserMedia API, offering cross-browser access to th
 Will be soon published on npm registry
 
 ```shell
-npm install --save camera.js
+npm install --save lfcamera
 ```
 
 Here you should say what actually happens when you execute the code above.
