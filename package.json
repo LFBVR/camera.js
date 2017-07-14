@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/LFBVR/camera.js#readme",
   "dependencies": {
-    "lodash.merge": "^4.6.0"
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
