@@ -1,5 +1,7 @@
 ### Courtesy of https://raw.githubusercontent.com/wearehive/project-guidelines/master/.gitignore
 
+lib/
+
 ### Node ###
 
 # Logs

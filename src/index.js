@@ -6,6 +6,9 @@ import DEFAULT_OPTIONS from './defaults';
 export default class Camera {
   constructor(captureOptions) {
     this.options = merge({}, DEFAULT_OPTIONS, captureOptions);
+
+    this.initVideo();
+    this.initCanvas();
   }
 
   async init() {
@@ -14,16 +17,11 @@ export default class Camera {
 
   initVideoStream() {
     return new Promise((resolve, reject) => {
-      const { width, height } = this.options;
-      this.video = document.createElement('video');
-      this.video.setAttribute('width', width);
-      this.video.setAttribute('height', height);
-
       const getUserMedia = (
-        navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia ||
-        navigator.msGetUserMedia
+          navigator.getUserMedia ||
+          navigator.webkitGetUserMedia ||
+          navigator.mozGetUserMedia ||
+          navigator.msGetUserMedia
       );
 
       if (!getUserMedia) {
@@ -31,23 +29,32 @@ export default class Camera {
       }
 
       getUserMedia.call(
-        navigator,
-        { video: true },
-        (s) => {
-          this.stream = s;
+          navigator,
+          { video: true },
+          (s) => {
+            this.stream = s;
 
-          if (this.video.mozSrcObject !== undefined) { // hack for Firefox < 19
-            this.video.mozSrcObject = this.stream;
-          } else {
-            const URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-            this.video.src = (URL && URL.createObjectURL(this.stream)) || this.stream;
-          }
+            if (this.video.mozSrcObject !== undefined) { // hack for Firefox < 19
+              this.video.mozSrcObject = this.stream;
+            } else {
+              const URL = window.URL || window.webkitURL || window.mozURL ||
+                  window.msURL;
+              this.video.src = (URL && URL.createObjectURL(this.stream)) ||
+                  this.stream;
+            }
 
-          resolve(this.initCanvas());
-        },
-        reject
+            resolve(this.start());
+          },
+          reject,
       );
     });
+  }
+
+  initVideo() {
+    const { width, height } = this.options;
+    this.video = document.createElement('video');
+    this.video.setAttribute('width', width);
+    this.video.setAttribute('height', height);
   }
 
   initCanvas() {
@@ -63,8 +70,6 @@ export default class Camera {
       this.context.translate(this.canvas.width, 0);
       this.context.scale(-1, 1);
     }
-
-    return this.start();
   }
 
   start() {
@@ -76,10 +81,7 @@ export default class Camera {
       return;
     }
 
-    this.renderTimer = setInterval(
-      this.tick(onFrame),
-      Math.round(1000 / fps)
-    );
+    this.renderTimer = setInterval(this.tick(onFrame), Math.round(1000 / fps));
   }
 
   tick(onFrame) {
