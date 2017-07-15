@@ -23,7 +23,7 @@ If you want the video stream to also be rendered in a `<canvas>` element, set th
 
 
 ```javascript
-import Camera from 'camera.js';
+import Camera from 'lfcamera';
 
 const camera = new Camera({
 	width: 160, // default: 640
