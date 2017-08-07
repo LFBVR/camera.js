@@ -1,7 +1,5 @@
 ### Courtesy of https://raw.githubusercontent.com/wearehive/project-guidelines/master/.gitignore
 
-lib/
-
 ### Node ###
 
 # Logs
@@ -27,11 +25,6 @@ yarn-error.log*
 # dotenv environment variables file(s)
 .env
 .env.*
-
-#Build generated
-dist/
-build/
-
 
 ### SublimeText ###
 # cache files for sublime text
