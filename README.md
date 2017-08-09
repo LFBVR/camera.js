@@ -1,6 +1,9 @@
 # Camera.js
 > A fork from https://github.com/idevelop/camera.js
 
+[![Build Status](https://travis-ci.org/LFBVR/camera.js.svg?branch=master)](https://travis-ci.org/LFBVR/camera.js)
+[![Known Vulnerabilities](https://snyk.io/test/github/lfbvr/camera.js/badge.svg)](https://snyk.io/test/github/lfbvr/camera.js)
+
 A wrapper around the HTML5 getUserMedia API, offering cross-browser access to the user's webcam video stream.
 
 ## Installing / Getting started
