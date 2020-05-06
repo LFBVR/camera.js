@@ -6,8 +6,9 @@
   "scripts": {
     "lint": "eslint src/*.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "npm run build",
-    "build": "babel src --out-dir lib"
+    "prepare": "npm run snyk-protect && npm run build",
+    "build": "babel src --out-dir lib",
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,8 @@
   },
   "homepage": "https://github.com/LFBVR/camera.js#readme",
   "dependencies": {
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "snyk": "^1.319.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -33,5 +35,6 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0"
-  }
+  },
+  "snyk": true
 }
